@@ -1,0 +1,36 @@
+# Visual Studio cache files
+.vs/
+*.user
+*.vspscc
+
+# Build results
+bin/
+obj/
+
+# NuGet packages
+*.nupkg
+packages/
+
+# MSTest test Results
+TestResults/
+
+# .NET Core build cache
+**/bin/
+**/obj/
+
+# Windows Temp Directory
+[Tt]emp/
+
+# User-specific files
+*.suo
+*.user
+*.sln.docstates
+
+# Logs files
+*.logs
+*.log
+
+# Other files to ignore
+*.bak
+*.vscode
+.DS_Store
