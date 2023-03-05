@@ -1,8 +1,12 @@
 using PasswordRecovery.Application;
+using PasswordRecovery.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 {
-    builder.Services.AddApplication();
+    builder.Services
+        .AddApplication()
+        .AddInfrastructure();
+    
     builder.Services.AddControllers();
 }
 
