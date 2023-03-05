@@ -3,10 +3,12 @@ using PasswordRecovery.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 {
+    var config = builder.Configuration;
+
     builder.Services
-        .AddApplication()
-        .AddInfrastructure();
-    
+    .AddApplication()
+    .AddInfrastructure(config);
+
     builder.Services.AddControllers();
 }
 
