@@ -1,5 +1,7 @@
 using GameOfFoodies.Contracts.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using PasswordRecovery.Application.Services.Authentication;
+using PasswordRecovery.Contracts.Authentication;
 
 namespace PasswordRecovery.Api.Controllers;
 
@@ -7,21 +9,49 @@ namespace PasswordRecovery.Api.Controllers;
 [Route("auth")]
 public class AuthenticationController : ControllerBase
 {
+    private readonly IAuthenticationService _authenticationService;
+
+    public AuthenticationController(IAuthenticationService authenticationService)
+    {
+        _authenticationService = authenticationService;
+    }
 
     [HttpPost("register")]
     public IActionResult Register(RegisterRequest request)
     {
-        // Register logic here
+        var authResult = _authenticationService.Register(
+            request.Name,
+            request.LastName,
+            request.Email,
+            request.Password);
+        
+        var response = new AuthResponse(
+            authResult.Id,
+            authResult.Name,
+            authResult.LastName,
+            authResult.Email,
+            authResult.Token
+        );
 
-        return Ok(request);
+        return Ok(response);
     }
 
     [HttpPost("login")]
     public IActionResult Login(LoginRequest request)
     {
-        // Login logic here
+        var authResult = _authenticationService.Login(
+            request.Email,
+            request.Password);
+        
+        var response = new AuthResponse(
+            authResult.Id,
+            authResult.Name,
+            authResult.LastName,
+            authResult.Email,
+            authResult.Token
+        );
 
-        return Ok(request);
+        return Ok(response);
     }
 }
 
