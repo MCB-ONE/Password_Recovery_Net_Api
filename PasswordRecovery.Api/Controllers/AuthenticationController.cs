@@ -20,14 +20,14 @@ public class AuthenticationController : ControllerBase
     public IActionResult Register(RegisterRequest request)
     {
         var authResult = _authenticationService.Register(
-            request.Name,
+            request.FirstName,
             request.LastName,
             request.Email,
             request.Password);
         
         var response = new AuthResponse(
             authResult.Id,
-            authResult.Name,
+            authResult.FirstName,
             authResult.LastName,
             authResult.Email,
             authResult.Token
@@ -45,7 +45,7 @@ public class AuthenticationController : ControllerBase
         
         var response = new AuthResponse(
             authResult.Id,
-            authResult.Name,
+            authResult.FirstName,
             authResult.LastName,
             authResult.Email,
             authResult.Token

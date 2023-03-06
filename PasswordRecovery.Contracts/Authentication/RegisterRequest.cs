@@ -1,7 +1,7 @@
 namespace GameOfFoodies.Contracts.Authentication;
 
 public record RegisterRequest(
-    string Name,
+    string FirstName,
     string LastName,
     string Email,
     string Password

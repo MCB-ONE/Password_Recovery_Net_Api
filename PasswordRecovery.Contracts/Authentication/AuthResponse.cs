@@ -2,7 +2,7 @@ namespace PasswordRecovery.Contracts.Authentication;
 
 public record AuthResponse(
     Guid Id,
-    string Name,
+    string FirstName,
     string LastName,
     string Email,
     string Token

@@ -18,7 +18,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         _dateTimeProvider = dateTimeProvider;
     }
 
-    public string GenerateToken(Guid userId, string name, string lastName)
+    public string GenerateToken(Guid userId, string firstName, string lastName)
     {
         // Define digital sign
         var signingCredentials = new SigningCredentials(
@@ -30,7 +30,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         var claims = new Claim[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
-            new Claim(JwtRegisteredClaimNames.GivenName, name),
+            new Claim(JwtRegisteredClaimNames.GivenName, firstName),
             new Claim(JwtRegisteredClaimNames.FamilyName, lastName),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
