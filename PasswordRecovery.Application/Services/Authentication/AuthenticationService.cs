@@ -50,10 +50,7 @@ public class AuthenticationService : IAuthenticationService
 
 
         return new AuthenticationResult(
-            user.Id,
-            firstName,
-            lastName,
-            email,
+            user,
             token);
     }
     public AuthenticationResult Login(string email, string password)
@@ -71,10 +68,7 @@ public class AuthenticationService : IAuthenticationService
         var token = _jwtGenerator.GenerateToken(user.Id, user.FirstName, user.LastName);
 
         return new AuthenticationResult(
-            user.Id,
-            user.FirstName,
-            user.LastName,
-            email,
+            user,
             token);
     }
 }
