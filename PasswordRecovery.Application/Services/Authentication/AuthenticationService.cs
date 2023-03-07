@@ -46,7 +46,7 @@ public class AuthenticationService : IAuthenticationService
 
         //TODO 7. Send email to user whit email confirmed message
 
-        var token = _jwtGenerator.GenerateToken(user.Id, user.FirstName, user.LastName);
+        var token = _jwtGenerator.GenerateToken(user);
 
 
         return new AuthenticationResult(
@@ -65,7 +65,7 @@ public class AuthenticationService : IAuthenticationService
         }
 
         // 3. Create JWT Token
-        var token = _jwtGenerator.GenerateToken(user.Id, user.FirstName, user.LastName);
+        var token = _jwtGenerator.GenerateToken(user);
 
         return new AuthenticationResult(
             user,
