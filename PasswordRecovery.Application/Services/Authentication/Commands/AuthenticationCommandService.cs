@@ -1,15 +1,17 @@
 using ErrorOr;
-using PasswordRecovery.Application.Common.Interfaces.Authentication;
-using PasswordRecovery.Application.Common.Interfaces.Persistence;
 using PasswordRecovery.Domain.Entities;
 using PasswordRecovery.Domain.Common.Errors;
-namespace PasswordRecovery.Application.Services.Authentication;
+using PasswordRecovery.Application.Common.Interfaces.Authentication;
+using PasswordRecovery.Application.Common.Interfaces.Persistence;
+using PasswordRecovery.Application.Services.Authentication.Common;
 
-public class AuthenticationService : IAuthenticationService
+namespace PasswordRecovery.Application.Services.Authentication.Commands;
+
+public class AuthenticationCommandService : IAuthenticationCommandService
 {
     private readonly IJwtTokenGenerator _jwtGenerator;
     private readonly IUserRepository _userRepository;
-    public AuthenticationService(IJwtTokenGenerator jwtGenerator, IUserRepository userRepository)
+    public AuthenticationCommandService(IJwtTokenGenerator jwtGenerator, IUserRepository userRepository)
     {
         _jwtGenerator = jwtGenerator;
         _userRepository = userRepository;
@@ -54,24 +56,5 @@ public class AuthenticationService : IAuthenticationService
             user,
             token);
     }
-    public ErrorOr<AuthenticationResult> Login(string email, string password)
-    {
-        //TODO 1. Validate user exist & isActive = true
-        if(_userRepository.GetByEmail(email) is not User user){
-              return Errors.Authentication.InvalidCredentials;
-        }
 
-        
-        // 2. Validate password is correct
-        if(user.Password != password){
-             return Errors.Authentication.InvalidCredentials;
-        }
-
-        // 3. Create JWT Token
-        var token = _jwtGenerator.GenerateToken(user);
-
-        return new AuthenticationResult(
-            user,
-            token);
-    }
 }
