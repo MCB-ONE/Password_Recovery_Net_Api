@@ -1,7 +1,8 @@
+using ErrorOr;
 using PasswordRecovery.Application.Common.Interfaces.Authentication;
 using PasswordRecovery.Application.Common.Interfaces.Persistence;
 using PasswordRecovery.Domain.Entities;
-
+using PasswordRecovery.Domain.Common.Errors;
 namespace PasswordRecovery.Application.Services.Authentication;
 
 public class AuthenticationService : IAuthenticationService
@@ -14,12 +15,12 @@ public class AuthenticationService : IAuthenticationService
         _userRepository = userRepository;
     }
 
-    public AuthenticationResult Register(string firstName, string lastName, string email, string password)
+    public ErrorOr<AuthenticationResult> Register(string firstName, string lastName, string email, string password)
     {
         // 1. Validare the user doesn't exist
         if ( _userRepository.GetByEmail(email) is not null)
         {
-            throw new Exception("Ya existe un usuario con este email.");
+            return Errors.User.DuplicateEmail;
         }
         //TODO 2. Create User (Generate uniq id) & persist with email not confirmed field
         var user = new User
@@ -53,15 +54,17 @@ public class AuthenticationService : IAuthenticationService
             user,
             token);
     }
-    public AuthenticationResult Login(string email, string password)
+    public ErrorOr<AuthenticationResult> Login(string email, string password)
     {
         //TODO 1. Validate user exist & isActive = true
         if(_userRepository.GetByEmail(email) is not User user){
-             throw new Exception("No existe un usuario con este email.");
+              return Errors.Authentication.InvalidCredentials;
         }
+
+        
         // 2. Validate password is correct
         if(user.Password != password){
-             throw new Exception("Contraseña incorrecta.");
+             return Errors.Authentication.InvalidCredentials;
         }
 
         // 3. Create JWT Token

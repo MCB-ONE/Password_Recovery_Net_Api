@@ -1,8 +1,10 @@
 using System.Diagnostics;
+using ErrorOr;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
+using PasswordRecovery.Api.Common.Http;
 
 namespace PasswordRecovery.Api.Common.Errors;
 
@@ -88,15 +90,13 @@ public class CustomProblemDetailsFactory : ProblemDetailsFactory
             problemDetails.Extensions["traceId"] = traceId;
         }
 
-        // var errors = httpContext?.Items[HttpContextItemKeys.Errors] as List<Error>;
+        var errors = httpContext?.Items[HttpContextItemKeys.Errors] as List<Error>;
 
-        // // Añadimos nuestos detalles customizados
-        // if (errors is not null)
-        // {
-        //     problemDetails.Extensions.Add("errorsCodes", errors.Select(e => e.Code));
-        // }
-        
-        problemDetails.Extensions.Add("customProperty", "customValue");
+        // Añadimos nuestos detalles customizados
+        if (errors is not null)
+        {
+            problemDetails.Extensions.Add("errorsCodes", errors.Select(e => e.Code));
+        }
 
     }
 }
