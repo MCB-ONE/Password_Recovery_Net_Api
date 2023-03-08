@@ -1,7 +1,7 @@
 
 using PasswordRecovery.Domain.Entities;
 
-namespace PasswordRecovery.Application.Services.Authentication.Common;
+namespace PasswordRecovery.Application.Authentication.Common;
 
 public record AuthenticationResult
 (

@@ -1,4 +1,4 @@
-namespace GameOfFoodies.Contracts.Authentication;
+namespace PasswordRecovery.Contracts.Authentication;
 
 public record LoginRequest(
     string Email,

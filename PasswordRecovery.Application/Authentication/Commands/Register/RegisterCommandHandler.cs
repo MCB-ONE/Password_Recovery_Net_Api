@@ -1,36 +1,37 @@
 using ErrorOr;
-using PasswordRecovery.Domain.Entities;
+using MediatR;
 using PasswordRecovery.Domain.Common.Errors;
 using PasswordRecovery.Application.Common.Interfaces.Authentication;
 using PasswordRecovery.Application.Common.Interfaces.Persistence;
-using PasswordRecovery.Application.Services.Authentication.Common;
+using PasswordRecovery.Domain.Entities;
+using PasswordRecovery.Application.Authentication.Common;
 
-namespace PasswordRecovery.Application.Services.Authentication.Commands;
-
-public class AuthenticationCommandService : IAuthenticationCommandService
+namespace PasswordRecovery.Application.Authentication.Commands.Register;
+public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<AuthenticationResult>>
 {
-    private readonly IJwtTokenGenerator _jwtGenerator;
+    private readonly IJwtTokenGenerator _jWtTokenGenerator;
     private readonly IUserRepository _userRepository;
-    public AuthenticationCommandService(IJwtTokenGenerator jwtGenerator, IUserRepository userRepository)
+
+    public RegisterCommandHandler(IJwtTokenGenerator jWtTokenGenerator, IUserRepository userRepository)
     {
-        _jwtGenerator = jwtGenerator;
+        _jWtTokenGenerator = jWtTokenGenerator;
         _userRepository = userRepository;
     }
-
-    public ErrorOr<AuthenticationResult> Register(string firstName, string lastName, string email, string password)
+    public async Task<ErrorOr<AuthenticationResult>> Handle(RegisterCommand command, CancellationToken cancellationToken)
     {
+
         // 1. Validare the user doesn't exist
-        if ( _userRepository.GetByEmail(email) is not null)
+        if ( _userRepository.GetByEmail(command.Email) is not null)
         {
             return Errors.User.DuplicateEmail;
         }
         //TODO 2. Create User (Generate uniq id) & persist with email not confirmed field
         var user = new User
         {
-            FirstName = firstName,
-            LastName = lastName,
-            Email = email,
-            Password = password,
+            FirstName = command.FirstName,
+            LastName = command.LastName,
+            Email = command.Email,
+            Password = command.Password,
             Token = false,
             IsActive = false
         };
@@ -49,12 +50,11 @@ public class AuthenticationCommandService : IAuthenticationCommandService
 
         //TODO 7. Send email to user whit email confirmed message
 
-        var token = _jwtGenerator.GenerateToken(user);
+        var token = _jWtTokenGenerator.GenerateToken(user);
 
 
         return new AuthenticationResult(
             user,
             token);
     }
-
 }
