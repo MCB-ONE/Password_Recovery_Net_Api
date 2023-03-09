@@ -7,7 +7,8 @@ public class User
     public string LastName { get; set; } = null!;
     public string Email { get; set; } = null!;
     public string Password { get; set; } = null!;
-    public bool Token { get; set; } = false;
+    public string Token { get; set; } = null!;
+    public string ActivateToken { get; set; } = null!;
     public bool IsActive { get; set; } = false;
 
 }

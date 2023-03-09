@@ -1,9 +1,11 @@
 namespace PasswordRecovery.Contracts.Authentication;
 
-public record AuthResponse(
+public record AuthenticationResponse(
     Guid Id,
     string FirstName,
     string LastName,
     string Email,
-    string Token
+    string Token,
+    string ActivateToken,
+    bool IsActive
 );

@@ -32,7 +32,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<A
             LastName = command.LastName,
             Email = command.Email,
             Password = command.Password,
-            Token = false,
+            ActivateToken = "TODO",
             IsActive = false
         };
 
