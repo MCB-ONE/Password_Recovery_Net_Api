@@ -7,8 +7,10 @@ public class User
     public string LastName { get; set; } = null!;
     public string Email { get; set; } = null!;
     public string Password { get; set; } = null!;
+    public string? VerificationToken { get; set; }
+    public DateTime? VerifiedAt { get; set; }
+    public string? PasswordResetToken { get; set; }
+    public DateTime? ResetTokenExpires { get; set; }
     public string Token { get; set; } = null!;
-    public string ActivateToken { get; set; } = null!;
-    public bool IsActive { get; set; } = false;
 
 }

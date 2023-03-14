@@ -5,7 +5,6 @@ public record AuthenticationResponse(
     string FirstName,
     string LastName,
     string Email,
-    string Token,
-    string ActivateToken,
-    bool IsActive
+    string VerificationToken,
+    string Token
 );

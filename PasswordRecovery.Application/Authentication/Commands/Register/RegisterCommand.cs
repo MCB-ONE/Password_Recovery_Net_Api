@@ -9,4 +9,4 @@ public record RegisterCommand(
     string LastName,
     string Email,
     string Password
-): IRequest<ErrorOr<AuthenticationResult>>;
+): IRequest<ErrorOr<RegisterResult>>;

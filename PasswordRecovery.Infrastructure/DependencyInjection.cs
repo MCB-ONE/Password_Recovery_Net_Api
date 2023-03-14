@@ -19,6 +19,7 @@ public static class DependencyInjection
         services.Configure<JwtSettings>(config.GetSection(JwtSettings.SectionName));
 
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddSingleton<IVerificationTokenGenerator, VerificationTokenGenerator>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         
         services.AddScoped<IUserRepository, UserRepository>();

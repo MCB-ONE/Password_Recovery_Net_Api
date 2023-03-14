@@ -27,10 +27,10 @@ public class AuthenticationController : ApiController
     {
         var command = _mapper.Map<RegisterCommand>(request);
 
-        ErrorOr<AuthenticationResult> authResult = await _mediator.Send(command);
+        ErrorOr<RegisterResult> authResult = await _mediator.Send(command);
 
         return authResult.Match(
-            authResult => Ok(_mapper.Map<AuthenticationResponse>(authResult)),
+            authResult => Ok(authResult),
             errors => Problem(errors)
         );
     }
