@@ -7,17 +7,17 @@ using PasswordRecovery.Domain.Entities;
 using PasswordRecovery.Application.Authentication.Common;
 
 namespace PasswordRecovery.Application.Authentication.Commands.Register;
-public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<AuthenticationResult>>
+public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<RegisterResult>>
 {
-    private readonly IJwtTokenGenerator _jWtTokenGenerator;
+    private readonly IVerificationTokenGenerator _verificationTokenGenerator;
     private readonly IUserRepository _userRepository;
 
-    public RegisterCommandHandler(IJwtTokenGenerator jWtTokenGenerator, IUserRepository userRepository)
+    public RegisterCommandHandler(IUserRepository userRepository, IVerificationTokenGenerator verificationTokenGenerator)
     {
-        _jWtTokenGenerator = jWtTokenGenerator;
         _userRepository = userRepository;
+        _verificationTokenGenerator = verificationTokenGenerator;
     }
-    public async Task<ErrorOr<AuthenticationResult>> Handle(RegisterCommand command, CancellationToken cancellationToken)
+    public async Task<ErrorOr<RegisterResult>> Handle(RegisterCommand command, CancellationToken cancellationToken)
     {
 
         await Task.CompletedTask;
@@ -26,20 +26,24 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<A
         {
             return Errors.User.DuplicateEmail;
         }
-        //TODO 2. Create User (Generate uniq id) & persist with email not confirmed field
+
+        //2. Create Token for email validation
+
+        var verificationToken = _verificationTokenGenerator.GenerateVerificationToken();
+
+        //3. Create User (Generate uniq id) & persist with email not confirmed field
         var user = new User
         {
             FirstName = command.FirstName,
             LastName = command.LastName,
             Email = command.Email,
             Password = command.Password,
-            ActivateToken = "TODO",
-            IsActive = false
+            VerificationToken = verificationToken,
+            VerifiedAt = null,
+            ResetTokenExpires = null
         };
 
         _userRepository.Add(user);
-
-        //TODO 3. Create JWT Token for email validation
 
         //TODO 4. Send the validation token to user email
 
@@ -51,11 +55,8 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<A
 
         //TODO 7. Send email to user whit email confirmed message
 
-        var token = _jWtTokenGenerator.GenerateToken(user);
 
-
-        return new AuthenticationResult(
-            user,
-            token);
+        return new RegisterResult(
+            "User successfully created.");
     }
 }
