@@ -21,7 +21,7 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, ErrorOr<Authenticat
     {
         await Task.CompletedTask;
         //TODO 1. Validate user exist & isActive = true
-        if(_userRepository.GetByEmail(query.Email) is not User user){
+        if( await _userRepository.GetByEmailAsync(query.Email) is not User user){
               return Domain.Common.Errors.Errors.Authentication.InvalidCredentials;
         }
 

@@ -1,4 +1,5 @@
 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PasswordRecovery.Application.Common.Interfaces.Authentication;
@@ -6,6 +7,7 @@ using PasswordRecovery.Application.Common.Interfaces.Persistence;
 using PasswordRecovery.Application.Common.Interfaces.Services;
 using PasswordRecovery.Infrastructure.Authentication;
 using PasswordRecovery.Infrastructure.Persistence;
+using PasswordRecovery.Infrastructure.Persistence.Repositories;
 using PasswordRecovery.Infrastructure.Services;
 
 namespace PasswordRecovery.Infrastructure;
@@ -22,6 +24,7 @@ public static class DependencyInjection
         services.AddSingleton<IVerificationTokenGenerator, VerificationTokenGenerator>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         
+        services.AddDbContext<PasswordRevoceryDbContext>(options => options.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=PasswordRecovery;Trusted_Connection=True;Encrypt=False"));
         services.AddScoped<IUserRepository, UserRepository>();
 
         return services;

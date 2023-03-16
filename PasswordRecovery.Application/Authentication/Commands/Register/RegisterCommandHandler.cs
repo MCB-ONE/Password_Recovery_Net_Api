@@ -9,28 +9,28 @@ using PasswordRecovery.Application.Authentication.Common;
 namespace PasswordRecovery.Application.Authentication.Commands.Register;
 public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<RegisterResult>>
 {
+    private readonly IJwtTokenGenerator _jWtTokenGenerator;
     private readonly IVerificationTokenGenerator _verificationTokenGenerator;
     private readonly IUserRepository _userRepository;
 
-    public RegisterCommandHandler(IUserRepository userRepository, IVerificationTokenGenerator verificationTokenGenerator)
+    public RegisterCommandHandler(IUserRepository userRepository, IVerificationTokenGenerator verificationTokenGenerator, IJwtTokenGenerator jWtTokenGenerator)
     {
         _userRepository = userRepository;
         _verificationTokenGenerator = verificationTokenGenerator;
+        _jWtTokenGenerator = jWtTokenGenerator;
     }
     public async Task<ErrorOr<RegisterResult>> Handle(RegisterCommand command, CancellationToken cancellationToken)
     {
-
-        await Task.CompletedTask;
         // 1. Validare the user doesn't exist
-        if ( _userRepository.GetByEmail(command.Email) is not null)
+        if ( await _userRepository.GetByEmailAsync(command.Email) is not null)
         {
             return Errors.User.DuplicateEmail;
         }
 
-        //2. Create Token for email validation
+        //2. Create Token for email validation & JWT Token
 
         var verificationToken = _verificationTokenGenerator.GenerateVerificationToken();
-
+  
         //3. Create User (Generate uniq id) & persist with email not confirmed field
         var user = new User
         {
@@ -43,7 +43,11 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<R
             ResetTokenExpires = null
         };
 
-        _userRepository.Add(user);
+        var JwtToken = _jWtTokenGenerator.GenerateToken(user);
+
+        user.Token = JwtToken;
+
+        await _userRepository.AddAsync(user);
 
         //TODO 4. Send the validation token to user email
 

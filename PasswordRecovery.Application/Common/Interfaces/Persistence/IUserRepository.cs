@@ -4,9 +4,10 @@ namespace PasswordRecovery.Application.Common.Interfaces.Persistence
 {
     public interface IUserRepository
     {
-        void Add(User user);
-        User? GetById(int id);
-        User? GetByEmail(string email);
-        void Update(User user);
+        //void Add(User user);
+        Task AddAsync(User user);
+        Task<User?> GetByIdAsync(Guid id);
+        Task<User?> GetByEmailAsync(string email);
+        Task UpdateAsync(User user);
     }
 }
