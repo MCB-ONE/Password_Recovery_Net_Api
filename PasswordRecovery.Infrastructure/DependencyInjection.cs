@@ -19,9 +19,11 @@ public static class DependencyInjection
         IConfiguration config)
     {   
         services.Configure<JwtSettings>(config.GetSection(JwtSettings.SectionName));
+        services.Configure<SmtpSettings>(config.GetSection(SmtpSettings.SectionName));
 
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddSingleton<IVerificationTokenGenerator, VerificationTokenGenerator>();
+        services.AddSingleton<IEmailService, EmailService>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         
         services.AddDbContext<PasswordRevoceryDbContext>(options => options.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=PasswordRecovery;Trusted_Connection=True;Encrypt=False"));

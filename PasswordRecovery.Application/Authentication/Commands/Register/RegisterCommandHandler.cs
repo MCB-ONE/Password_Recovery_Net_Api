@@ -5,20 +5,25 @@ using PasswordRecovery.Application.Common.Interfaces.Authentication;
 using PasswordRecovery.Application.Common.Interfaces.Persistence;
 using PasswordRecovery.Domain.Entities;
 using PasswordRecovery.Application.Authentication.Common;
+using PasswordRecovery.Application.Common.Interfaces.Services;
 
 namespace PasswordRecovery.Application.Authentication.Commands.Register;
 public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<RegisterResult>>
 {
     private readonly IJwtTokenGenerator _jWtTokenGenerator;
     private readonly IVerificationTokenGenerator _verificationTokenGenerator;
+
+    private readonly IEmailService _emailService;
     private readonly IUserRepository _userRepository;
 
-    public RegisterCommandHandler(IUserRepository userRepository, IVerificationTokenGenerator verificationTokenGenerator, IJwtTokenGenerator jWtTokenGenerator)
+    public RegisterCommandHandler(IJwtTokenGenerator jWtTokenGenerator, IVerificationTokenGenerator verificationTokenGenerator, IEmailService emailService, IUserRepository userRepository)
     {
-        _userRepository = userRepository;
-        _verificationTokenGenerator = verificationTokenGenerator;
         _jWtTokenGenerator = jWtTokenGenerator;
+        _verificationTokenGenerator = verificationTokenGenerator;
+        _emailService = emailService;
+        _userRepository = userRepository;
     }
+
     public async Task<ErrorOr<RegisterResult>> Handle(RegisterCommand command, CancellationToken cancellationToken)
     {
         // 1. Validare the user doesn't exist
@@ -49,7 +54,8 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<R
 
         await _userRepository.AddAsync(user);
 
-        //TODO 4. Send the validation token to user email
+        // 4. Send the validation token to user email
+        await _emailService.SendConfirmationEmail(user.Email, user.VerificationToken);
 
         //TODO 4. Receive the user token verification
 
