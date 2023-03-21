@@ -10,5 +10,9 @@ public static partial class Errors
                 code: "User.DuplicateEmail",
                 description: "Este email ya existe."
             );
+
+        public static Error EmailNotValidated => Error.Conflict(
+                code: "User.EmailNotValidated",
+                description: "Dirección de correo no validada."            );
     }
 }

@@ -1,5 +1,6 @@
 using ErrorOr;
 using MediatR;
+using PasswordRecovery.Domain.Common.Errors;
 using PasswordRecovery.Application.Authentication.Common;
 using PasswordRecovery.Application.Common.Interfaces.Authentication;
 using PasswordRecovery.Application.Common.Interfaces.Persistence;
@@ -19,7 +20,6 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, ErrorOr<Authenticat
 
     public async Task<ErrorOr<AuthenticationResult>> Handle(LoginQuery query, CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
         //TODO 1. Validate user exist & isActive = true
         if( await _userRepository.GetByEmailAsync(query.Email) is not User user){
               return Domain.Common.Errors.Errors.Authentication.InvalidCredentials;
@@ -29,6 +29,10 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, ErrorOr<Authenticat
         // 2. Validate password is correct
         if(user.Password != query.Password){
              return Domain.Common.Errors.Errors.Authentication.InvalidCredentials;
+        }
+
+        if(user.VerifiedAt is null){
+            return Errors.User.EmailNotValidated;
         }
 
         // 3. Create JWT Token

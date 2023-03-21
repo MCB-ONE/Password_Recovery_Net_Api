@@ -26,11 +26,18 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetByIdAsync(Guid id)
     {
-         return await _dbContext.Users.SingleOrDefaultAsync(user => user.Id == id);
+        return await _dbContext.Users.SingleOrDefaultAsync(user => user.Id == id);
+    }
+
+    public async Task<User?> GetByVerifyTokenAsync(string token)
+    {
+        return await _dbContext.Users.SingleOrDefaultAsync(user => user.VerificationToken == token);
     }
 
     public async Task UpdateAsync(User user)
     {
-        throw new NotImplementedException();
+        _dbContext.Entry(user).State = EntityState.Modified;
+
+        await _dbContext.SaveChangesAsync();
     }
 }

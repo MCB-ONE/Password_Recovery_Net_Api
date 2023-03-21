@@ -6,6 +6,7 @@ using PasswordRecovery.Application.Authentication.Commands.Register;
 using PasswordRecovery.Application.Authentication.Common;
 using PasswordRecovery.Application.Authentication.Queries.Login;
 using MapsterMapper;
+using PasswordRecovery.Application.Authentication.Commands.Verify;
 
 namespace PasswordRecovery.Api.Controllers;
 
@@ -35,20 +36,41 @@ public class AuthenticationController : ApiController
         );
     }
 
+    [HttpPost("verify")]
+    public async Task<IActionResult> Verify(string verifyToken)
+    {
+        var command = new VerifyCommand(verifyToken);
+
+        var verifyResult = await _mediator.Send(command);
+
+        // Custom logic error response 
+        if (verifyResult.IsError && verifyResult.FirstError == Domain.Common.Errors.Errors.Authentication.InvalidCredentials)
+        {
+            return Problem(
+                statusCode: StatusCodes.Status401Unauthorized,
+                title: verifyResult.FirstError.Description);
+        }
+
+        return verifyResult.Match(
+            verifyResult => Ok(verifyResult),
+            errors => Problem(errors)
+        );
+    }
+
     [HttpPost("login")]
-    public async Task <IActionResult> Login(LoginRequest request)
+    public async Task<IActionResult> Login(LoginRequest request)
     {
         var query = _mapper.Map<LoginQuery>(request);
-        
+
         var authResult = await _mediator.Send(query);
 
-            // Custom logic error response 
-            if(authResult.IsError && authResult.FirstError == Domain.Common.Errors.Errors.Authentication.InvalidCredentials)
-            {
-                return Problem(
-                    statusCode: StatusCodes.Status401Unauthorized,
-                    title: authResult.FirstError.Description);
-            }
+        // Custom logic error response 
+        if (authResult.IsError && authResult.FirstError == Domain.Common.Errors.Errors.Authentication.InvalidCredentials)
+        {
+            return Problem(
+                statusCode: StatusCodes.Status401Unauthorized,
+                title: authResult.FirstError.Description);
+        }
 
         return authResult.Match(
             authResult => Ok(_mapper.Map<AuthenticationResponse>(authResult)),

@@ -8,6 +8,7 @@ namespace PasswordRecovery.Application.Common.Interfaces.Persistence
         Task AddAsync(User user);
         Task<User?> GetByIdAsync(Guid id);
         Task<User?> GetByEmailAsync(string email);
+        Task<User?> GetByVerifyTokenAsync(string token);
         Task UpdateAsync(User user);
     }
 }

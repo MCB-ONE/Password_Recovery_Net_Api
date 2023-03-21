@@ -57,15 +57,6 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<R
         // 4. Send the validation token to user email
         await _emailService.SendConfirmationEmail(user.Email, user.VerificationToken);
 
-        //TODO 4. Receive the user token verification
-
-        //TODO 5. Verify if the token is valid
-
-        //TODO 6. Update user entity (email confirmed field)
-
-        //TODO 7. Send email to user whit email confirmed message
-
-
         return new RegisterResult(
             "User successfully created.");
     }
